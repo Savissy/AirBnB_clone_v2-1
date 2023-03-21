@@ -114,14 +114,29 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
-        if not args:
-            print("** class name missing **")
-            return
-        elif args not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[args]()
+        """split command"""
+        command = command.split()
+        classes = component[1]
+        params = component[2:]
+        kwargs = {}
+        for param in params:
+            key, value = param.split('=', 1)
+
+        if value.startswith('"') and value.endswith('"'):
+            value = value[1: -1].replace('_',' ').replace('"','\\"')
+
+        elif '.' in value:
+            try:
+                value = float(value)
+            except ValueError:
+                print("** value is missing **")
+        else:
+            try:
+                value = int(value)
+            except ValueError:
+                print("** value is missing **")
+        kwags[key] = value
+        new_instance = HBNBCommand.classes[classes](**kargs)
         storage.save()
         print(new_instance.id)
         storage.save()

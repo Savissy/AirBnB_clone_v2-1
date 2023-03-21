@@ -115,31 +115,24 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """split command"""
-        command = command.split()
-        classes = component[1]
-        params = component[2:]
-        kwargs = {}
-        for param in params:
-            key, value = param.split('=', 1)
-
-        if value.startswith('"') and value.endswith('"'):
-            value = value[1: -1].replace('_',' ').replace('"','\\"')
-
-        elif '.' in value:
-            try:
-                value = float(value)
-            except ValueError:
-                print("** value is missing **")
-        else:
-            try:
-                value = int(value)
-            except ValueError:
-                print("** value is missing **")
-        kwags[key] = value
-        new_instance = HBNBCommand.classes[classes](**kargs)
-        storage.save()
+        try:
+            if not args:
+                raise SyntaxError()
+            arg_list = args.split(" ")
+            kwargs = {}
+            for args in arg_list[1:]:
+                arg_split = arg.split("=")
+                arg_split[1] = eval(arg_split[1])
+                if type(arg_split[1]) is str:
+                    arg_split[1] = arg_split[1].replace("_"," ").replace('"','\\"')
+                    kwargs[arg_split[0]] = arg_split[1]
+        except SyntaxError:
+            print("class name is missing")
+        except NameError:
+            print("class doesnt exist")
+        new_instance = HBNBCommand.classes[arg_list[0]](**kwargs)
+        new_instance.save()
         print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """

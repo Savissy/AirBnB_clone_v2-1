@@ -14,8 +14,8 @@ class FileStorage:
         if cls is not None:
             my_dict ={}
             for cls_name_id, cls_instance in self.__objects.items():
-                if cls_name_id.split('.')[0] = cls.__name__:
-                    my_dict[cls_name_id] == cls_instance
+                if cls_name_id.split('.')[0] == cls.__name__:
+                    my_dict[cls_name_id] = cls_instance
             return my_dict
         return self.__objects
 
@@ -36,7 +36,7 @@ class FileStorage:
         """defining a method all that takes in obj=None"""
         if obj is not None:
             return
-        for key, value self.__objects.items():
+        for key, value in self.__objects.items():
             if obj is value:
                 del self.__objects[key]
                 break

@@ -8,16 +8,16 @@ class FileStorage:
     __file_path = 'file.json'
     __objects = {}
 
-    def all(self cls=None):
+    def all(self, cls=None):
         """This dictionary my_dict, iterate over objects in dic
            The check is to see if each class name matche CLS parameter name"""
-           if cls is not None:
-               my_dict ={}
-               for item, vals in self.__objects.items():
-                   if item.split(".")[0] = cls.__name__:
-                       my_dict[items] = cls.vals
-               return my_dict
-           return self.__objects
+        if cls is not None:
+            my_dict ={}
+            for cls_name_id, cls_instance in self.__objects.items():
+                if cls_name_id.split('.')[0] = cls.__name__:
+                    my_dict[cls_name_id] = cls_instance
+            return my_dict
+        return self.__objects
 
     def new(self, obj):
         """Adds new object to storage dictionary"""

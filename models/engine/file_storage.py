@@ -15,7 +15,7 @@ class FileStorage:
             my_dict ={}
             for cls_name_id, cls_instance in self.__objects.items():
                 if cls_name_id.split('.')[0] = cls.__name__:
-                    my_dict[cls_name_id] = cls_instance
+                    my_dict[cls_name_id] == cls_instance
             return my_dict
         return self.__objects
 

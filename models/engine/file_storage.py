@@ -32,7 +32,7 @@ class FileStorage:
                 temp[key] = val.to_dict()
             json.dump(temp, f)
 
-    def del(self, obj=None):
+    def delete(self, obj=None):
         """defining a method all that takes in obj=None"""
         if obj is not None:
             return

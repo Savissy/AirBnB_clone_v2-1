@@ -10,6 +10,7 @@ class FileStorage:
     __file_path = 'file.json'
     __objects = {}
 
+<<<<<<< HEAD
     def __init__(self):
         """Initializes a FileStorage instance"""
         self.model_classes = {
@@ -39,6 +40,18 @@ class FileStorage:
             obj_key = obj.to_dict()['__class__'] + '.' + obj.id
             if obj_key in self.__objects.keys():
                 del self.__objects[obj_key]
+=======
+    def all(self, cls=None):
+        """This dictionary my_dict, iterate over objects in dic
+           The check is to see if each class name matche CLS parameter name"""
+        if cls is not None:
+            my_dict ={}
+            for cls_name_id, cls_instance in self.__objects.items():
+                if cls_name_id.split('.')[0] == cls.__name__:
+                    my_dict[cls_name_id] = cls_instance
+            return my_dict
+        return self.__objects
+>>>>>>> 3705157254f0715df3376bad20d8ce465dfbbc86
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -53,6 +66,15 @@ class FileStorage:
             for key, val in self.__objects.items():
                 temp[key] = val.to_dict()
             json.dump(temp, file)
+
+    def delete(self, obj=None):
+        """defining a method all that takes in obj=None"""
+        if obj is not None:
+            return
+        for key, value in self.__objects.items():
+            if obj is value:
+                del self.__objects[key]
+                break
 
     def reload(self):
         """Loads storage dictionary from file"""

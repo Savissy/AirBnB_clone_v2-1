@@ -1,60 +1,42 @@
 #!/usr/bin/python3
-"""A module for web application deployment with Fabric."""
+"""
+    This script distributes an archive to your web servers,
+    using the function do_deploy:
+"""
+from fabric.api import *
 import os
-from datetime import datetime
-from fabric.api import env, local, put, run, runs_once
+import re
 
 
-env.hosts = ["34.73.0.174", "35.196.78.105"]
-"""The list of host server IP addresses."""
-
-
-@runs_once
-def do_pack():
-    """Archives the static files."""
-    if not os.path.isdir("versions"):
-        os.mkdir("versions")
-    cur_time = datetime.now()
-    output = "versions/web_static_{}{}{}{}{}{}.tgz".format(
-        cur_time.year,
-        cur_time.month,
-        cur_time.day,
-        cur_time.hour,
-        cur_time.minute,
-        cur_time.second
-    )
-    try:
-        print("Packing web_static to {}".format(output))
-        local("tar -cvzf {} web_static".format(output))
-        archize_size = os.stat(output).st_size
-        print("web_static packed: {} -> {} Bytes".format(output, archize_size))
-    except Exception:
-        output = None
-    return output
+env.user = 'ubuntu'
+env.hosts = ['18.207.233.231', '54.82.173.157']
 
 
 def do_deploy(archive_path):
-    """Deploys the static files to the host servers.
-    Args:
-        archive_path (str): The path to the archived static files.
+    """
+        Deploys archive path to remote hosts
     """
     if not os.path.exists(archive_path):
         return False
-    file_name = os.path.basename(archive_path)
-    folder_name = file_name.replace(".tgz", "")
-    folder_path = "/data/web_static/releases/{}/".format(folder_name)
-    success = False
+
     try:
-        put(archive_path, "/tmp/{}".format(file_name))
-        run("mkdir -p {}".format(folder_path))
-        run("tar -xzf /tmp/{} -C {}".format(file_name, folder_path))
-        run("rm -rf /tmp/{}".format(file_name))
-        run("mv {}web_static/* {}".format(folder_path, folder_path))
-        run("rm -rf {}web_static".format(folder_path))
+        put(archive_path, "/tmp/")
+        regex = r'\/(\w+).tgz$'
+        pattern = re.findall(regex, archive_path)
+
+        web_path = "/data/web_static/releases/{}".format(pattern[0])
+
+        run("mkdir -p {}".format(web_path))
+        # unpacking
+        run("tar -xzf /tmp/{}.tgz -C {}".format(pattern[0], web_path))
+        run("mv {}/web_static/* {}".format(web_path, web_path))
+        run("rm -rf {}/web_static".format(web_path))
+        run("rm /tmp/{}.tgz".format(pattern[0]))
         run("rm -rf /data/web_static/current")
-        run("ln -s {} /data/web_static/current".format(folder_path))
-        print('New version deployed!')
-        success = True
+        run("ln -s {} /data/web_static/current".format(web_path))
+
+        # success
+        print("New version deployed!")
+        return True
     except Exception:
-        success = False
-    return success
+        return False
